@@ -146,7 +146,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',   # Simple and suitable for small dataset (<10K records). also when ordering isn’t unique
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination', # stable, efficient, and high-performance pagination for large, frequently updated datasets, Real-time data (ordering is unique and consistent)
     'PAGE_SIZE': 10,
- 
+    
+    # Rate Limiting (Throttling) - Basic. Prevents brute force attacks and API abuses.
+    'DEFAULT_THROTTLE_CLASSES': [
+    'rest_framework.throttling.AnonRateThrottle',
+    'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day'
+    },
+
 }
 
 
