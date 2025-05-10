@@ -142,21 +142,28 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',   # Default lock-down: all endpoints require authentication. will be overriden per-view as we needed
     ],
 
-    # Pagination setting to prevents large dataset transfers and to ensure better client-side performance
+    # Pagination, reduces payload size to ensure better client-side performance
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',   # Simple and suitable for small dataset (<10K records). also when ordering isn’t unique
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination', # stable, efficient, and high-performance pagination for large, frequently updated datasets, Real-time data (ordering is unique and consistent)
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination', # stable, efficient, and high-performance pagination for large, frequently updated datasets (Real-time data) - (ordering is unique and consistent)
     'PAGE_SIZE': 10,
     
-    # Rate Limiting (Throttling) - Basic. Prevents brute force attacks and API abuses.
+    # Basic Rate Limiting (Throttling). prevents server overload, brute force attacks and API abuses.
     'DEFAULT_THROTTLE_CLASSES': [
-    'rest_framework.throttling.AnonRateThrottle',
-    'rest_framework.throttling.UserRateThrottle'
+    'rest_framework.throttling.AnonRateThrottle',   # Unauthenticated user
+    'rest_framework.throttling.UserRateThrottle'    # Authenticated user
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/day',
-        'user': '1000/day'
+        'anon': '100/day',  # 100 req per day for unauthenticated user
+        'user': '1000/day'  # 1000 req per day for authenticated user
     },
 
+        
+    # Filtering, reduces database load, applied sequentially in the order defined
+    'DEFAULT_FILTER_BACKENDS': [    
+        'django_filters.rest_framework.DjangoFilterBackend',    # Exact field matches/filtering - (fast)
+        'rest_framework.filters.SearchFilter',  # Full-text search in fields - (slower)
+        'rest_framework.filters.OrderingFilter',    # Sorts/orders the results
+    ],
 }
 
 
