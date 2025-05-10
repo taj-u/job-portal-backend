@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,8 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 
 ]
 
@@ -135,4 +138,27 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+}
+
+
+# JWT Settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),     # Short-lived access token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Long-lived refresh token
+    'ROTATE_REFRESH_TOKENS': True,      # New refresh token on refresh
+    'BLACKLIST_AFTER_ROTATION': True,   # Invalidate old refresh tokens
+
+    'UPDATE_LAST_LOGIN': True,      # Update last login timestamp when refreshing token
+
+    'ALGORITHM': 'HS256',   # The algorithm used to sign the JWT. HS256 (HMAC with SHA-256) - symmetric (Uses the same key for signing and verification)
+    'SIGNING_KEY': SECRET_KEY,    # The key used to sign the JWT (e.g. Django's SECRET_KEY)
+    'VERIFYING_KEY': None,  # For asymmetric algorithms, the public key used for verification
+
+    'AUTH_HEADER_TYPES': ('Bearer',),   # Specifies acceptable authorization header prefixes. e.g. 'Bearer', 'JWT', 'Token'
+
+    'USER_ID_FIELD': 'id',      # The field (unique) in the User model that identifies the user
+    'USER_ID_CLAIM': 'user_id', # The claim name in the JWT payload that stores the user identifier
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',), # Token classes that SimpleJWT will handle
+    'TOKEN_TYPE_CLAIM': 'token_type',   # Name of the claim that stores the token type (helps differentiate between access and refresh tokens)
 }
