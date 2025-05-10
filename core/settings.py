@@ -132,12 +132,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # REST Framework settings
 REST_FRAMEWORK = {
+    # Auth
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',    # stateless authentication, More secure than session-based auth for APIs, Tokens expire (unlike DRF's default TokenAuthentication)
     ),
+
+    # Permission applied for all endpoints initially.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',   # Default lock-down: all endpoints require authentication. will be overriden per-view as we needed
     ],
+
+    # Pagination setting to prevents large dataset transfers and to ensure better client-side performance
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',   # Simple and suitable for small dataset (<10K records). also when ordering isn’t unique
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination', # stable, efficient, and high-performance pagination for large, frequently updated datasets, Real-time data (ordering is unique and consistent)
+    'PAGE_SIZE': 10,
+ 
 }
 
 
